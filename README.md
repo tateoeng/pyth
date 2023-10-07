@@ -17,9 +17,9 @@ For instance, the function `include_()` takes exactly two inputs. The first is a
 
 Note that `include_()` outputs the resultant text as a list to out. Special wrapper function `print_()` pretty prints the text for readability. Wrapper `number_()` returns a list of lines of the specified text, prefixed with line numbers, which `print_(number_())` pretty prints. But the shortcuts `p()`, `n()` and `pn()` simplify things further.
 
-The function `commit_()` (and shortcut `c()`) stores the output back into the specified text; `save_()` saves the text to disk.
+The function `commit_()` (and shortcut `c()`) stores the output back into the specified text; `save_()` saves the text to disk (as does `s()`).
 
-Each text-manipulation shortcut has an array of hybrid shortcut which combine `p`, `n`, and `c` variously. So `inc()` has associated functions `pinc()`, `ninc()`, `pninc()` and `cinc()` to allow one to rapidly review code, make the desired change, then commit and save.
+Each text-manipulation shortcut has a smattering of hybrid shortcuts which combine `p`, `n`, and `c` variously. So `inc()` has associated functions `pinc()`, `ninc()`, `pninc()` and `cinc()` to allow one to rapidly review code, make the desired change, then commit and save.
 
 ### other core text-manipulation functions
 - `exclude_()` performs the inverse of include.
