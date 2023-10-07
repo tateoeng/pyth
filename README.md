@@ -6,7 +6,9 @@ When the script is run interactively, it loads all texts in the working director
 Pyth may also be imported from inside a script, something like
 
 > `from pyth import *`
+> 
 > `sh()`
+>
 > `tb('filename.py')`
 
 Core file- and text-manipulation functions are explicitly named and have well-defined inputs and outputs. Each is attended by a series of wrapper function shortcuts which take a variety of input types which can be reformatted and passed to the core functions.
