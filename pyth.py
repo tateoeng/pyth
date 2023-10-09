@@ -338,10 +338,10 @@ def expand_(passages = None, text_length = None):
 def inc(passages = None, text = None):
     global shelf, ft, fb
     if text is None: return inc(passages, fb)
-    elif isinstance(text, str): return [string.rstrip('\n') + '\n']
+    elif isinstance(text, str): return inc(passages, shelf[text])
     elif isinstance(text, list):
-        if passages is None: return text
-        elif isinstance(passages, int): return text[passages]
+        if isinstance(passages, int): return text[passages]
+
         elif isinstance(passages, str): return include_(expand_(passages, len(text)), text)
 
 def pinc(inclusions = None, body = None): return p(inc(inclusions, body))
@@ -611,3 +611,5 @@ def prev():
 def list_():
     global shelf
     return [title for title in shelf.keys()]
+    
+def cpl(): capp(last_() + '\n'); s(); pn()
