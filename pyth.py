@@ -2,25 +2,14 @@
 ################################################################################
 # pyth, a suite of tools for manipulating text files from inside the python interpretter
 ################################################################################
-# glossary:
-# text - txt file stored to a local dictionary
-# selection - one or more texts
-# shelf - a dictionary in which to store texts
-# manipulation - an action performed on a text
-#################################################################################
 shelf, ft, fb, nl = {}, '', [], '\n'
 
 from datetime import datetime
 from itertools import chain
-from os import get_terminal_size
-from os import listdir
-from os import remove
-from os import system
-from os.path import isdir
+from os import get_terminal_size, listdir, remove, system
+from os.path import isdir, isfile
 from sys import argv
-import inspect
-import readline
-import types
+import inspect, readline, types
 
 ################################################################################
 # model:
@@ -62,7 +51,9 @@ def sh(selection = None):
         for title in listdir('.'):
             if not isdir(title): shelve_(title)
     elif isinstance(selection, str):
-        for title in selection.split(','): shelve_(title)
+        for title in selection.split(','):
+            if isfile(title): shelve_(title)
+            else: shelf[title] = []
 
 sh()
 ################################################################################
@@ -254,7 +245,7 @@ def bk(text = None, title = None):
     if title is None: bk(text, ft)
     elif text is None: bk(shelf[ft], title)
     else: backup_(text, title)
-
+5
 def sbp(): s(); bk(); pn()
 
 ################################################################################
@@ -338,10 +329,10 @@ def expand_(passages = None, text_length = None):
 def inc(passages = None, text = None):
     global shelf, ft, fb
     if text is None: return inc(passages, fb)
-    elif isinstance(text, str): return inc(passages, shelf[text])
+    elif isinstance(text, str): return [string.rstrip('\n') + '\n']
     elif isinstance(text, list):
-        if isinstance(passages, int): return text[passages]
-
+        if passages is None: return text
+        elif isinstance(passages, int): return text[passages]
         elif isinstance(passages, str): return include_(expand_(passages, len(text)), text)
 
 def pinc(inclusions = None, body = None): return p(inc(inclusions, body))
@@ -551,6 +542,26 @@ def pnswp(passage2, passage4, text = None): p(swp(passage2, passage4, n(text)))
 def cswp(passage2, passage4, text = None): c(swp(passage2, passage4, text))
 
 ################################################################################
+# overwrite_(contiguous_passage, with_text)
+################################################################################
+def overwrite_(positions, with_text, from_text):
+    return insert_(with_text, positions[0], exclude_(positions, from_text))
+
+def ovr(pos, with_text, from_text = None):
+    if from_text is None: return ovr(pos, with_text, fb)
+    else:
+        if isinstance(with_text, str): return ovr(pos, [with_text], from_text)
+        else:
+            if isinstance(pos, int): return ovr([pos], with_text, from_text)
+            elif isinstance(pos, str): return ovr(expand_(pos), with_text, from_text)
+            else: return overwrite_(pos, with_text, from_text)
+    
+def povr(pos, w, f = None): p(ovr(pos, w, f))
+def novr(pos, w, f = None): n(ovr(pos, w, f))
+def pnovr(pos, w, f = None): p(ovr(pos, w, n(f)))
+def covr(pos, w, f = None): c(ovr(pos, w, f))
+
+################################################################################
 # shortcuts for utilites p, n and c paired to list manipulations
 ################################################################################
 # print_include             pinc    pexc    papp    pins    pmov    pswp    psnr
@@ -570,9 +581,6 @@ def cswp(passage2, passage4, text = None): c(swp(passage2, passage4, text))
 # page_up_                  pgu     rewind page and print
 ################################################################################
 
-# fix pn() and pn-headed functions
-# pygmentize
-
 if len(argv) > 1: tb(argv[1])
 else: tb(argv[0])
 
@@ -591,9 +599,12 @@ def page(n = None, text = None):
         else:
             bgn = (n - 1) * page_height
             end = n * page_height
-            clear()
-            print_(include_([i for i in range(bgn, end)], number_(text)))
-            current_page_number = n
+            if end > len(text): end = len(text) - 1
+            if bgn >= len(text): current_page_number = 1; page()
+            else:
+                clear()
+                print_(include_([i for i in range(bgn, end)], number_(text)))
+                current_page_number = n
 
 def next():
     global current_page_number
@@ -603,6 +614,7 @@ def next():
 def prev():
     global current_page_number
     current_page_number -= 1
+    if current_page_number == 0: current_page_number = 1
     page(current_page_number)
     
 # search_()
@@ -611,5 +623,10 @@ def prev():
 def list_():
     global shelf
     return [title for title in shelf.keys()]
-    
-def cpl(): capp(last_() + '\n'); s(); pn()
+
+def new_(title): shelf[title] = []
+
+## to-dos
+# fix pn() and pn-headed functions
+# pygmentize
+
